@@ -1,0 +1,2 @@
+# Consensus artifact: preserve byte-for-byte identity across platforms.
+genesis.json -text

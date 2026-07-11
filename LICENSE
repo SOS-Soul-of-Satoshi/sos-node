@@ -1,0 +1,23 @@
+Soul of Satoshi — Node Binary License (testnet)
+Copyright (c) 2026 Soul of Satoshi. All rights reserved.
+
+This repository distributes compiled binaries of the Soul of Satoshi node.
+The source code is not published at this time.
+
+GRANT. You are granted a non-exclusive, non-transferable, royalty-free license
+to download and run these binaries for the sole purpose of operating a node on,
+and interacting with, the Soul of Satoshi network.
+
+RESTRICTIONS. Except as permitted above, you may not reverse engineer,
+decompile, disassemble, modify, sublicense, sell, or redistribute the binaries,
+nor use them to operate a competing or derivative network.
+
+FUTURE OPEN SOURCE. Soul of Satoshi intends to publish the node source under an
+open-source license ahead of mainnet. This notice will be superseded at that
+time.
+
+NO WARRANTY. The binaries are provided "AS IS", without warranty of any kind.
+This is testnet software; tokens have no monetary value; use at your own risk.
+
+NOTE: this notice is a placeholder pending review by legal counsel and is not
+legal advice.

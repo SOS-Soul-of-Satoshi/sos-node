@@ -1,0 +1,4 @@
+# node runtime
+*.log
+datadir/
+.sos/

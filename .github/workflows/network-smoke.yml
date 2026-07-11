@@ -1,0 +1,36 @@
+name: Network Smoke
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  push:
+    branches: [main]
+    paths:
+      - "genesis.json"
+      - "genesis.json.sha256"
+      - "scripts/sos-public-probe.py"
+      - ".github/workflows/network-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sos-public-network-smoke
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Verify pinned genesis
+        run: sha256sum -c genesis.json.sha256
+
+      - name: Self-test probe
+        run: python3 scripts/sos-public-probe.py --self-test
+
+      - name: Probe live network
+        run: python3 scripts/sos-public-probe.py --pretty
