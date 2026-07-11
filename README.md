@@ -16,18 +16,19 @@ the private development repository during testnet.
 |---|---|
 | Network | Public pre-mainnet testnet |
 | Chain ID | `0x534F53` (`5459795`) |
-| Genesis SHA-256 | `265a2ef3417c21af1616d222ab8b793a306046070ba4468619c6be9ebb0816ff` |
+| Genesis SHA-256 | `e9c96fb551ac5fd1ef8646df08df2c658fe0c624c869fadf53a8b8c4522b78fc` |
 | Node profile | Pure `verify-only`; no embedded prover and no development RPC |
-| Linux binary SHA-256 | `9f58f03891c949181080538ba9d259bba91b58988ad37a632d3f5e3045a8789b` |
+| Linux binary SHA-256 | `5171c7443a4ac17dc84190e50f4508c64de693ead50450b08b60250b0a7285ca` |
+| Windows binary SHA-256 | `cc234602536c5957d83dd5dd29710f8401e7c12a9e46c704da716e46abe0d7cf` |
 | Consensus | Two-phase BFT PoS; stake-weighted proposer permutation v2 |
 | Nominal block time | 5 seconds |
-| Active validators | 3 processes on one Hetzner host |
+| Active validators | 4: three on Hetzner and one off-host |
 | Ethereum bridge | Capped bidirectional Sepolia beta |
 
-The three-validator deployment proves protocol behavior and recovery, but it is
-not operational decentralization: all public validators currently share one
-host and one operator. Independent operators and external audits remain
-mainnet gates.
+The fourth validator gives the public testnet a second host failure domain, and
+the chain continues finalizing when one of the four validators is unavailable.
+This is still not organizational decentralization: all four are operated by the
+project. Independent operators and external audits remain mainnet gates.
 
 ## Join the network
 
@@ -42,7 +43,7 @@ sha256sum -c sos-node-v0.2.0-testnet-linux-x64.tar.gz.sha256
 
 # The release includes genesis.json. You can also verify the hosted copy:
 curl -fsSLo genesis.json https://node.soulofsatoshi.com/genesis.json
-echo "265a2ef3417c21af1616d222ab8b793a306046070ba4468619c6be9ebb0816ff  genesis.json" \
+echo "e9c96fb551ac5fd1ef8646df08df2c658fe0c624c869fadf53a8b8c4522b78fc  genesis.json" \
   | sha256sum -c -
 
 ./sos-node --datadir "$HOME/.sos-node"
@@ -78,11 +79,12 @@ development RPC surface.
 
 ## Tested feature matrix
 
-The fresh testnet has completed end-to-end faucet, signed transparent transfer,
-shield, private send, unshield, SOS-to-Ethereum deposit, Ethereum-to-SOS burn,
-validator-set V0-to-V1 rotation, replay negatives, restart recovery, P2P
-catch-up, and public RPC failover. A six-hour fault/load campaign is being
-completed before the release is marked final.
+Generation 2 has completed end-to-end faucet, signed transparent transfer,
+shield, private send, unshield, SOS-to-Ethereum deposit, two proven
+validator-set rotations, replay negatives, restart recovery, P2P catch-up, and
+public RPC failover. The active Ethereum-to-SOS withdrawal and a six-hour
+production-profile fault/load campaign are in progress before the release is
+marked final.
 
 ## Security notice
 

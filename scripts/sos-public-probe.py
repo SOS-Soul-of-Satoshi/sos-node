@@ -144,14 +144,14 @@ def run_probe() -> dict[str, Any]:
     )
     expected_genesis_sha256 = os.environ.get(
         "SOS_EXPECTED_GENESIS_SHA256",
-        "265a2ef3417c21af1616d222ab8b793a306046070ba4468619c6be9ebb0816ff",
+        "e9c96fb551ac5fd1ef8646df08df2c658fe0c624c869fadf53a8b8c4522b78fc",
     ).lower()
     expected_genesis_validators = env_int("SOS_EXPECTED_GENESIS_VALIDATORS", 3)
     eth_rpc = os.environ.get(
         "SOS_ETH_RPC", "https://ethereum-sepolia-rpc.publicnode.com"
     )
     bridge_contract = os.environ.get(
-        "SOS_BRIDGE_CONTRACT", "0x862Bc5c5BEa4a32020dc450390Fc25d75BE79e93"
+        "SOS_BRIDGE_CONTRACT", "0x946BBC3e2de973DA3f3ac194c9d8e9298a576c3E"
     ).lower()
     expected_tvl = env_int("SOS_EXPECTED_TVL_CAP_SATS", 1_000_000_000_000)
     expected_deposit = env_int("SOS_EXPECTED_MAX_DEPOSIT_SATS", 100_000_000_000)
