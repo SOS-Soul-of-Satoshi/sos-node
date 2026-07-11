@@ -10,6 +10,8 @@ on:
       - "genesis.json.sha256"
       - "scripts/sos-public-probe.py"
       - ".github/workflows/network-smoke.yml"
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
