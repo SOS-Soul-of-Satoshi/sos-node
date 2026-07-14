@@ -16,19 +16,23 @@ the private development repository during testnet.
 |---|---|
 | Network | Public pre-mainnet testnet |
 | Chain ID | `0x534F53` (`5459795`) |
-| Genesis SHA-256 | `e9c96fb551ac5fd1ef8646df08df2c658fe0c624c869fadf53a8b8c4522b78fc` |
+| Genesis SHA-256 | `fc0ae56044642f14f5eee71ef165fea5d0868fdc260c9fd15b4acd5f13805e21` |
 | Node profile | Pure `verify-only`; no embedded prover and no development RPC |
-| Linux binary SHA-256 | `5171c7443a4ac17dc84190e50f4508c64de693ead50450b08b60250b0a7285ca` |
-| Windows binary SHA-256 | `cc234602536c5957d83dd5dd29710f8401e7c12a9e46c704da716e46abe0d7cf` |
+| Linux binary SHA-256 | `4452b974b4f189f4cf5356cf6e41146affaf49e24a455d867109cc5b0bfc0368` |
+| Windows binary SHA-256 | `922113281a5d2f29a04d147160ed2b5a22a76b7b673074980407d8212ea4f8d2` |
 | Consensus | Two-phase BFT PoS; stake-weighted proposer permutation v2 |
 | Nominal block time | 5 seconds |
-| Active validators | 4: three on Hetzner and one off-host |
-| Ethereum bridge | Capped bidirectional Sepolia beta |
+| Active validators | 3 project-operated identities, currently co-hosted |
+| Ethereum bridge | Paused pending a proven validator-set transition |
 
-The fourth validator gives the public testnet a second host failure domain, and
-the chain continues finalizing when one of the four validators is unavailable.
-This is still not organizational decentralization: all four are operated by the
-project. Independent operators and external audits remain mainnet gates.
+The current validator processes share one Hetzner host. This testnet therefore
+does not demonstrate host or organizational decentralization. Independent
+operators, additional failure domains and external audits remain mainnet gates.
+
+Bridge mutations are disabled in the node and wallet. The live SOS
+validator-set hash does not currently match the Sepolia V2 contract, so users
+must not create an SOS lock or burn wSOS until a reconciled transition and a new
+operational check are published.
 
 ## Join the network
 
@@ -43,11 +47,24 @@ sha256sum -c sos-node-v0.2.0-testnet-linux-x64.tar.gz.sha256
 
 # The release includes genesis.json. You can also verify the hosted copy:
 curl -fsSLo genesis.json https://node.soulofsatoshi.com/genesis.json
-echo "e9c96fb551ac5fd1ef8646df08df2c658fe0c624c869fadf53a8b8c4522b78fc  genesis.json" \
+echo "fc0ae56044642f14f5eee71ef165fea5d0868fdc260c9fd15b4acd5f13805e21  genesis.json" \
   | sha256sum -c -
 
 ./sos-node --datadir "$HOME/.sos-node"
 ```
+
+Release assets also include an aggregate `SHA256SUMS` and `SHA256SUMS.sig`.
+Verify both the archive hashes and the release signature with the public key
+committed in this repository:
+
+```bash
+sha256sum -c SHA256SUMS
+ssh-keygen -Y verify -f RELEASE_SIGNERS -I sos-release -n sos-release \
+  -s SHA256SUMS.sig < SHA256SUMS
+```
+
+The expected signing-key fingerprint is
+`SHA256:5Ax7PUTlVR0ZpgrQYNDSjeOu/bR9zZZX7PrVAngS2WY`.
 
 The node resolves `seed.soulofsatoshi.com`, connects over libp2p, and verifies
 the chain from the pinned genesis. Explicit peers can be supplied with
@@ -75,24 +92,26 @@ not need a GPU. Provers and relayers are separately operated services.
 The scheduled probe in [`scripts/sos-public-probe.py`](scripts/sos-public-probe.py)
 checks public HTTPS, chain progress, supply conservation, privacy state, bridge
 caps/accounting, validator-set agreement with Sepolia, and rejection of the
-development RPC surface.
+development RPC surface. A validator-set mismatch is critical whenever bridge
+operations are enabled. It is reported as degraded, never healthy, only while
+both authoritative operation flags are explicitly false.
 
 ## Tested feature matrix
 
-Generation 2 has completed end-to-end faucet, signed transparent transfer,
-shield, private send, unshield, SOS-to-Ethereum deposit, two proven
-validator-set rotations, replay negatives, restart recovery, P2P catch-up, and
-public RPC failover. The active Ethereum-to-SOS withdrawal and a six-hour
-production-profile fault/load campaign are in progress before the release is
-marked final.
+Generation 2 completed end-to-end faucet, signed transparent transfer, shield,
+private send, unshield, both bridge directions, proven validator-set rotations,
+replay negatives, restart recovery, P2P catch-up and public RPC failover. A
+six-hour isolated production-profile chaos/load campaign completed on
+2026-07-13. Those results are historical evidence; they do not override the
+current bridge pause or establish independent-validator resilience.
 
 ## Security notice
 
 This is unaudited testnet software. Testnet tokens have no monetary value. The
-active bridge enforces a 10,000 SOS outstanding cap and a 1,000 SOS per-deposit
-cap; these controls limit exposure but do not replace consensus, bridge,
-cryptographic, wallet, and operations audits. Do not use testnet keys for any
-other network.
+Sepolia V2 deployment enforces a 10,000 SOS outstanding cap and a 1,000 SOS
+per-deposit cap, but the bridge is currently paused. These controls limit
+exposure and do not replace consensus, bridge, cryptographic, wallet or
+operations audits. Do not use testnet keys for any other network.
 
 ## License
 

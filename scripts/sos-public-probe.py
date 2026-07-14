@@ -51,6 +51,50 @@ def hex32(value: Any) -> str:
     return normalized
 
 
+def abi_address(value: Any) -> str:
+    if not isinstance(value, str):
+        raise ProbeError("expected an ABI-encoded address")
+    raw = value.removeprefix("0x").lower()
+    if not re.fullmatch(r"[0-9a-f]{64}", raw) or raw[:24] != "0" * 24:
+        raise ProbeError(f"invalid ABI address: {value!r}")
+    return "0x" + raw[-40:]
+
+
+def abi_uint_tuple(value: Any, count: int) -> list[int]:
+    if not isinstance(value, str):
+        raise ProbeError("expected an ABI-encoded uint tuple")
+    raw = value.removeprefix("0x")
+    if not re.fullmatch(rf"[0-9a-fA-F]{{{64 * count}}}", raw):
+        raise ProbeError(f"expected {count} ABI words, got {value!r}")
+    return [int(raw[index : index + 64], 16) for index in range(0, len(raw), 64)]
+
+
+def eth_call(rpc_url: str, contract: str, selector: str, timeout: float) -> Any:
+    return rpc(
+        rpc_url,
+        "eth_call",
+        [{"to": contract, "data": selector}, "latest"],
+        timeout,
+    )
+
+
+def classify_validator_set(
+    sos_hash: str, ethereum_hash: str, operations_enabled: bool | None
+) -> tuple[str, str | None]:
+    if sos_hash == ethereum_hash:
+        return "ok", None
+    detail = f"validator-set mismatch: SOS={sos_hash}, Ethereum={ethereum_hash}"
+    if operations_enabled is False:
+        return "paused", detail
+    raise ProbeError(detail)
+
+
+def overall_status(failures: list[str], warnings: list[str]) -> str:
+    if failures:
+        return "critical"
+    return "degraded" if warnings else "ok"
+
+
 def request_json(url: str, payload: dict[str, Any], timeout: float) -> dict[str, Any]:
     data = json.dumps(payload, separators=(",", ":")).encode("utf-8")
     request = urllib.request.Request(
@@ -144,17 +188,36 @@ def run_probe() -> dict[str, Any]:
     )
     expected_genesis_sha256 = os.environ.get(
         "SOS_EXPECTED_GENESIS_SHA256",
-        "e9c96fb551ac5fd1ef8646df08df2c658fe0c624c869fadf53a8b8c4522b78fc",
+        "fc0ae56044642f14f5eee71ef165fea5d0868fdc260c9fd15b4acd5f13805e21",
     ).lower()
     expected_genesis_validators = env_int("SOS_EXPECTED_GENESIS_VALIDATORS", 3)
     eth_rpc = os.environ.get(
         "SOS_ETH_RPC", "https://ethereum-sepolia-rpc.publicnode.com"
     )
     bridge_contract = os.environ.get(
-        "SOS_BRIDGE_CONTRACT", "0x946BBC3e2de973DA3f3ac194c9d8e9298a576c3E"
+        "SOS_BRIDGE_CONTRACT", "0x79C524691423090350B68be2CfA191d9ad0cF1fD"
     ).lower()
+    expected_bridge_domain = hex32(
+        os.environ.get(
+            "SOS_EXPECTED_BRIDGE_DOMAIN",
+            "0x23e5ab115e3de1b8e0f2c93cf172acc319b04f290a0db0a8d3574ba57f4c67f5",
+        )
+    )
     expected_tvl = env_int("SOS_EXPECTED_TVL_CAP_SATS", 1_000_000_000_000)
     expected_deposit = env_int("SOS_EXPECTED_MAX_DEPOSIT_SATS", 100_000_000_000)
+    expected_batch_image_id = hex32(
+        os.environ.get(
+            "SOS_EXPECTED_BATCH_IMAGE_ID",
+            "0x20e2c3f9b7dbc09768cebf5959d0ce76f140b56513a23d741e719fb2d3d8fd33",
+        )
+    )
+    expected_valset_image_id = hex32(
+        os.environ.get(
+            "SOS_EXPECTED_VALSET_IMAGE_ID",
+            "0xd0936cc417617e785bdcfcb7943304ab1a0fa1dbc97c4d428e51a62d9f293820",
+        )
+    )
+    expected_chain_id = env_int("SOS_EXPECTED_CHAIN_ID", 5459795)
 
     report: dict[str, Any] = {
         "schemaVersion": 1,
@@ -162,8 +225,10 @@ def run_probe() -> dict[str, Any]:
         "service": "sos-public-testnet-probe",
         "checks": {},
         "failures": [],
+        "warnings": [],
     }
     failures: list[str] = report["failures"]
+    warnings: list[str] = report["warnings"]
 
     endpoints = {
         "landing": "https://soulofsatoshi.com",
@@ -258,6 +323,7 @@ def run_probe() -> dict[str, Any]:
         failures.append(f"privacy: {exc}")
         report["checks"]["privacy"] = {"status": "critical", "error": str(exc)}
 
+    bridge_operations_enabled: bool | None = None
     try:
         bridge = rpc(sos_rpc, "sos_getBridgeInfo", [], timeout)
         locked = as_int(bridge["totalLocked"])
@@ -273,16 +339,90 @@ def run_probe() -> dict[str, Any]:
                 f"bridge accounting mismatch: locked={locked}, "
                 f"supplyLocked={supply_locked}, cap={cap}"
             )
+        bridge_operations_enabled = bridge.get("operationsEnabled")
+        configured_operations_enabled = bridge.get("configuredOperationsEnabled")
+        if not isinstance(bridge_operations_enabled, bool) or not isinstance(
+            configured_operations_enabled, bool
+        ):
+            raise ProbeError("bridge operation flags are missing or non-boolean")
+        if bridge_operations_enabled != configured_operations_enabled:
+            raise ProbeError(
+                "effective and configured bridge operation flags do not agree"
+            )
+        bridge_status = "ok" if bridge_operations_enabled else "paused"
+        if not bridge_operations_enabled:
+            warnings.append("bridge operations are administratively paused")
         report["checks"]["bridge"] = {
-            "status": "ok",
+            "status": bridge_status,
             "totalLocked": locked,
             "tvlCap": cap,
             "maxDeposit": max_deposit,
             "completedWithdrawals": as_int(bridge["completedWithdrawals"]),
+            "activeLocks": as_int(bridge["activeLocks"]),
+            "operationsEnabled": bridge_operations_enabled,
+            "configuredOperationsEnabled": configured_operations_enabled,
         }
     except (KeyError, ProbeError, TypeError) as exc:
         failures.append(f"bridge: {exc}")
         report["checks"]["bridge"] = {"status": "critical", "error": str(exc)}
+
+    try:
+        contract_code = rpc(eth_rpc, "eth_getCode", [bridge_contract, "latest"], timeout)
+        if not isinstance(contract_code, str) or contract_code in ("0x", "0x0"):
+            raise ProbeError("bridge contract has no Ethereum bytecode")
+        batch_image_id = hex32(
+            eth_call(eth_rpc, bridge_contract, "0x5fa7bfc5", timeout)
+        )
+        valset_image_id = hex32(
+            eth_call(eth_rpc, bridge_contract, "0x395e0cd8", timeout)
+        )
+        bridge_domain = hex32(
+            eth_call(eth_rpc, bridge_contract, "0x76ae5bc8", timeout)
+        )
+        contract_chain_id = as_int(
+            eth_call(eth_rpc, bridge_contract, "0x866dc50c", timeout)
+        )
+        max_tvl, max_deposit, outstanding, available = abi_uint_tuple(
+            eth_call(eth_rpc, bridge_contract, "0xc6dd812f", timeout), 4
+        )
+        wsos = abi_address(eth_call(eth_rpc, bridge_contract, "0x724d0223", timeout))
+        wsos_bridge = abi_address(eth_call(eth_rpc, wsos, "0xe78cea92", timeout))
+        wsos_supply = as_int(eth_call(eth_rpc, wsos, "0x18160ddd", timeout))
+        matches = {
+            "batchImageId": batch_image_id == expected_batch_image_id,
+            "valsetImageId": valset_image_id == expected_valset_image_id,
+            "bridgeDomain": bridge_domain == expected_bridge_domain,
+            "chainId": contract_chain_id == expected_chain_id,
+            "maxTvl": max_tvl == expected_tvl,
+            "maxDeposit": max_deposit == expected_deposit,
+            "availableAccounting": available == max_tvl - outstanding,
+            "wsosBridge": wsos_bridge == bridge_contract,
+            "wsosSupply": wsos_supply == outstanding,
+        }
+        if not all(matches.values()):
+            raise ProbeError(f"bridge deployment invariant mismatch: {matches}")
+        report["checks"]["bridgeContract"] = {
+            "status": "ok",
+            "contract": bridge_contract,
+            "batchImageId": batch_image_id,
+            "valsetTransitionImageId": valset_image_id,
+            "bridgeDomain": bridge_domain,
+            "chainId": contract_chain_id,
+            "maxTvl": max_tvl,
+            "maxDeposit": max_deposit,
+            "outstandingTvl": outstanding,
+            "availableTvl": available,
+            "wsos": wsos,
+            "wsosBridge": wsos_bridge,
+            "wsosSupply": wsos_supply,
+            "matches": matches,
+        }
+    except (ProbeError, TypeError, ValueError) as exc:
+        failures.append(f"bridgeContract: {exc}")
+        report["checks"]["bridgeContract"] = {
+            "status": "critical",
+            "error": str(exc),
+        }
 
     try:
         dev = rpc_raw(sos_rpc, "sos_devCreditBalance", [], timeout)
@@ -304,30 +444,23 @@ def run_probe() -> dict[str, Any]:
                 proof.get("validatorSetHash", proof.get("validator_set_hash"))
             )
             sos_epoch = as_int(proof["epoch"])
-            contract_code = rpc(
-                eth_rpc, "eth_getCode", [bridge_contract, "latest"], timeout
-            )
-            if not isinstance(contract_code, str) or contract_code in ("0x", "0x0"):
-                raise ProbeError("bridge contract has no Ethereum bytecode")
-            contract_raw = rpc(
-                eth_rpc,
-                "eth_call",
-                [{"to": bridge_contract, "data": "0xcdea2912"}, "latest"],
-                timeout,
-            )
+            contract_raw = eth_call(eth_rpc, bridge_contract, "0xcdea2912", timeout)
             contract_valset = hex32(contract_raw)
-            if sos_valset != contract_valset:
-                raise ProbeError(
-                    f"validator-set mismatch: SOS={sos_valset}, Ethereum={contract_valset}"
-                )
+            status, detail = classify_validator_set(
+                sos_valset, contract_valset, bridge_operations_enabled
+            )
+            if detail is not None:
+                warnings.append(detail)
             report["checks"]["validatorSet"] = {
-                "status": "ok",
+                "status": status,
                 "sosHeight": height,
                 "sosEpoch": sos_epoch,
                 "sosHash": sos_valset,
                 "ethereumHash": contract_valset,
                 "contract": bridge_contract,
             }
+            if detail is not None:
+                report["checks"]["validatorSet"]["reason"] = detail
         except (KeyError, ProbeError, TypeError) as exc:
             failures.append(f"validatorSet: {exc}")
             report["checks"]["validatorSet"] = {
@@ -335,7 +468,7 @@ def run_probe() -> dict[str, Any]:
                 "error": str(exc),
             }
 
-    report["overallStatus"] = "ok" if not failures else "critical"
+    report["overallStatus"] = overall_status(failures, warnings)
     return report
 
 
@@ -343,6 +476,19 @@ def self_test() -> None:
     assert as_int("42") == 42
     assert as_int("0x2a") == 42
     assert hex32("ab" * 32) == "0x" + "ab" * 32
+    assert abi_address("0x" + "00" * 12 + "ab" * 20) == "0x" + "ab" * 20
+    assert abi_uint_tuple("0x" + f"{1:064x}{2:064x}{3:064x}{4:064x}", 4) == [1, 2, 3, 4]
+    assert classify_validator_set("0x01", "0x01", True) == ("ok", None)
+    assert classify_validator_set("0x01", "0x02", False)[0] == "paused"
+    assert overall_status([], []) == "ok"
+    assert overall_status([], ["paused"]) == "degraded"
+    assert overall_status(["failed"], ["paused"]) == "critical"
+    try:
+        classify_validator_set("0x01", "0x02", True)
+    except ProbeError:
+        pass
+    else:
+        raise AssertionError("open bridge accepted a validator-set mismatch")
     for bad in ("0x12", "zz" * 32, None):
         try:
             hex32(bad)
@@ -363,7 +509,7 @@ def main() -> int:
         return 0
     report = run_probe()
     print(json.dumps(report, indent=2 if args.pretty else None, sort_keys=True))
-    return 0 if report["overallStatus"] == "ok" else 1
+    return 0 if report["overallStatus"] in ("ok", "degraded") else 1
 
 
 if __name__ == "__main__":

@@ -76,6 +76,40 @@
     "vesting_locked_sats": 185999999999999
   },
   "bridge_validator_set_hash": "0x3258a5a7ed0161ab5634d210cf2ede35c30d3c13365143b3e6f704f1bb5f7a38",
+  "bridge_routes": [
+    {
+      "bridge_version": 1,
+      "bridge_domain": null,
+      "ethereum_chain_id": 11155111,
+      "contract_address": "0x946BBC3e2de973DA3f3ac194c9d8e9298a576c3E",
+      "lock_start_height": 0,
+      "lock_end_height": 1,
+      "release_start_height": 0,
+      "release_end_height": null
+    },
+    {
+      "bridge_version": 2,
+      "bridge_domain": "0x23e5ab115e3de1b8e0f2c93cf172acc319b04f290a0db0a8d3574ba57f4c67f5",
+      "ethereum_chain_id": 11155111,
+      "contract_address": "0x79C524691423090350B68be2CfA191d9ad0cF1fD",
+      "lock_start_height": 1,
+      "lock_end_height": null,
+      "release_start_height": 0,
+      "release_end_height": null
+    }
+  ],
+  "bridge_migration": {
+    "source_contract": "0x946BBC3e2de973DA3f3ac194c9d8e9298a576c3E",
+    "funding_address": "sost1cjezmpn2q7xxt4hsgjwvkj8wmakjy7wjwn4tlqefnwt4nx7qgyfst4jwgs",
+    "total_minted_sats": 1002020000,
+    "total_burned_sats": 999510000,
+    "bridge_locked_sats": 2510000,
+    "processed_burn_ids": [
+      "3b572043da902c6488e2c86742a337d6cf96a09d205c84a72936e681ae131b7b",
+      "2a3cfd38f6044e74e10f0383128f22b9b7d68af531bd5e4f58334d68e3c73fc1",
+      "bccc4dc91b60feccf55fed6f99b2dd61346950ba4a8d4cb97c0fe6347a01c9e6"
+    ]
+  },
   "chain_id": "0x534F53",
   "claims": {
     "enabled": false
