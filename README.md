@@ -16,49 +16,50 @@ the private development repository during testnet.
 |---|---|
 | Network | Public pre-mainnet testnet |
 | Chain ID | `0x534F53` (`5459795`) |
-| Genesis SHA-256 | `56f3f8e215a221125171641a3272afa7cb3781079121be509f9cc4db6a3a58b1` |
+| Genesis SHA-256 | `6d20c7a7e6fa4706d4f9e2bcc0ad23c8a144601aee391301ef0912e3c809e524` |
 | Node profile | Pure `verify-only`; no embedded prover and no development RPC |
-| Linux binary SHA-256 | `0707cc04785050c8714bd8cb03729ef1e9c71c9379c32b6378aa75e1f72625b6` |
-| Windows binary SHA-256 | Pending signed `v0.3.0-testnet` publication |
+| Linux binary SHA-256 | `683b60a7992ed56378916714dc34ebdeb45dadab8e291eeeb4c5b0c490583113` |
+| Windows binary SHA-256 | `3c6e5212fb67106447163b8fc20758927c0555a69136eaa1aeaaa614ff9d884f` |
 | Consensus | Two-phase BFT PoS; stake-weighted proposer permutation v2 |
 | Nominal block time | 5 seconds |
 | Active validators | 4 project-operated identities, currently co-hosted |
-| Ethereum bridge | Paused pending a proven validator-set transition |
+| Ethereum bridge | Sepolia Route2 pinned; paused until the `v0.3.1-testnet` deployment canary completes |
 
 The current validator processes share one Hetzner host. This testnet therefore
 does not demonstrate host or organizational decentralization. Independent
 operators, additional failure domains and external audits remain mainnet gates.
 
-Bridge mutations are disabled in the node and wallet. The live SOS
-validator-set hash does not currently match the Sepolia V2 contract, so users
-must not create an SOS lock or burn wSOS until a reconciled transition and a new
-operational check are published.
+Bridge mutations remain disabled until the final release deployment and public
+two-way canary complete. The pinned Route2 contract is
+`0xB8863C0c094DE2f3f0C50EF96101b53B7374F0C9`, with bridge domain
+`0xb706d5afab98a2371bc5593e86be8ee1262f94dff4c1577741e1f506dd1a27ea`.
 
 ## Join the network
 
-The public network currently runs the fresh `v0.3.0-testnet` genesis above.
-Signed `v0.3.0-testnet` release assets are being staged; do not use older
-`v0.1.0` or `v0.2.0-testnet` binaries against this genesis.
+The public network uses the fresh `v0.3.1-testnet` Route2 genesis above. Do not
+use `v0.3.0-testnet` or older binaries against this genesis.
 
 ```bash
 # Verify the hosted genesis:
 curl -fsSLo genesis.json https://node.soulofsatoshi.com/genesis.json
-echo "56f3f8e215a221125171641a3272afa7cb3781079121be509f9cc4db6a3a58b1  genesis.json" \
+echo "6d20c7a7e6fa4706d4f9e2bcc0ad23c8a144601aee391301ef0912e3c809e524  genesis.json" \
   | sha256sum -c -
 ```
 
-Release assets also include an aggregate `SHA256SUMS` and `SHA256SUMS.sig`.
-Verify both the archive hashes and the release signature with the public key
-committed in this repository:
+Release assets include checksum sidecars and a signed
+`RELEASE-MANIFEST.json`. Verify the archive hashes and then the manifest with
+the allowed signers committed in this repository:
 
 ```bash
-sha256sum -c SHA256SUMS
+sha256sum -c sos-node-v0.3.1-testnet-linux-x86_64.tar.gz.sha256
+sha256sum -c sos-node-v0.3.1-testnet-windows-x86_64.zip.sha256
 ssh-keygen -Y verify -f RELEASE_SIGNERS -I sos-release -n sos-release \
-  -s SHA256SUMS.sig < SHA256SUMS
+  -s RELEASE-MANIFEST.sshsig < RELEASE-MANIFEST.json
 ```
 
-The expected signing-key fingerprint is
-`SHA256:5Ax7PUTlVR0ZpgrQYNDSjeOu/bR9zZZX7PrVAngS2WY`.
+The active signing-key fingerprint for `v0.3.1-testnet` and later is
+`SHA256:c9hqz7F4dn6rWUF7ABbG8pLxJ9R45vEA95buNaVjuNE`. The retired v1 public key
+is retained only to verify historical releases.
 
 The node resolves `seed.soulofsatoshi.com`, connects over libp2p, and verifies
 the chain from the pinned genesis. Explicit peers can be supplied with

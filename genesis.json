@@ -113,9 +113,9 @@
       "release_start_height": 0
     },
     {
-      "bridge_domain": "0x06cb3c5a9b0ed8a1c0e51fa52cfe19db7d0eccc652e7c3f7587f5000e72b385f",
+      "bridge_domain": "0xb706d5afab98a2371bc5593e86be8ee1262f94dff4c1577741e1f506dd1a27ea",
       "bridge_version": 2,
-      "contract_address": "0xD44226a0235319A8e7b068A2633Ae4B5FB625fae",
+      "contract_address": "0xB8863C0c094DE2f3f0C50EF96101b53B7374F0C9",
       "ethereum_chain_id": 11155111,
       "lock_end_height": null,
       "lock_start_height": 1,
