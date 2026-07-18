@@ -22,7 +22,7 @@ the private development repository during testnet.
 | Windows binary SHA-256 | Pending signed `v0.3.0-testnet` publication |
 | Consensus | Two-phase BFT PoS; stake-weighted proposer permutation v2 |
 | Nominal block time | 5 seconds |
-| Active validators | 3 project-operated identities, currently co-hosted |
+| Active validators | 4 project-operated identities, currently co-hosted |
 | Ethereum bridge | Paused pending a proven validator-set transition |
 
 The current validator processes share one Hetzner host. This testnet therefore
