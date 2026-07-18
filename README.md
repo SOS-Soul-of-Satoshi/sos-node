@@ -16,10 +16,10 @@ the private development repository during testnet.
 |---|---|
 | Network | Public pre-mainnet testnet |
 | Chain ID | `0x534F53` (`5459795`) |
-| Genesis SHA-256 | `fc0ae56044642f14f5eee71ef165fea5d0868fdc260c9fd15b4acd5f13805e21` |
+| Genesis SHA-256 | `56f3f8e215a221125171641a3272afa7cb3781079121be509f9cc4db6a3a58b1` |
 | Node profile | Pure `verify-only`; no embedded prover and no development RPC |
-| Linux binary SHA-256 | `4452b974b4f189f4cf5356cf6e41146affaf49e24a455d867109cc5b0bfc0368` |
-| Windows binary SHA-256 | `922113281a5d2f29a04d147160ed2b5a22a76b7b673074980407d8212ea4f8d2` |
+| Linux binary SHA-256 | `0707cc04785050c8714bd8cb03729ef1e9c71c9379c32b6378aa75e1f72625b6` |
+| Windows binary SHA-256 | Pending signed `v0.3.0-testnet` publication |
 | Consensus | Two-phase BFT PoS; stake-weighted proposer permutation v2 |
 | Nominal block time | 5 seconds |
 | Active validators | 3 project-operated identities, currently co-hosted |
@@ -36,21 +36,15 @@ operational check are published.
 
 ## Join the network
 
-Download the `v0.2.0-testnet` asset for your platform from
-[Releases](https://github.com/SOS-Soul-of-Satoshi/sos-node/releases), then
-verify its adjacent `.sha256` file.
+The public network currently runs the fresh `v0.3.0-testnet` genesis above.
+Signed `v0.3.0-testnet` release assets are being staged; do not use older
+`v0.1.0` or `v0.2.0-testnet` binaries against this genesis.
 
 ```bash
-# Linux example
-tar -xzf sos-node-v0.2.0-testnet-linux-x64.tar.gz
-sha256sum -c sos-node-v0.2.0-testnet-linux-x64.tar.gz.sha256
-
-# The release includes genesis.json. You can also verify the hosted copy:
+# Verify the hosted genesis:
 curl -fsSLo genesis.json https://node.soulofsatoshi.com/genesis.json
-echo "fc0ae56044642f14f5eee71ef165fea5d0868fdc260c9fd15b4acd5f13805e21  genesis.json" \
+echo "56f3f8e215a221125171641a3272afa7cb3781079121be509f9cc4db6a3a58b1  genesis.json" \
   | sha256sum -c -
-
-./sos-node --datadir "$HOME/.sos-node"
 ```
 
 Release assets also include an aggregate `SHA256SUMS` and `SHA256SUMS.sig`.
@@ -88,6 +82,7 @@ not need a GPU. Provers and relayers are separately operated services.
 - Explorer: [explorer.soulofsatoshi.com](https://explorer.soulofsatoshi.com)
 - JSON-RPC and genesis: [node.soulofsatoshi.com](https://node.soulofsatoshi.com)
 - Ethereum contracts: [sos-contracts](https://github.com/SOS-Soul-of-Satoshi/sos-contracts)
+- Feedback and support: [GitHub Discussions](https://github.com/SOS-Soul-of-Satoshi/sos-node/discussions)
 
 The scheduled probe in [`scripts/sos-public-probe.py`](scripts/sos-public-probe.py)
 checks public HTTPS, chain progress, supply conservation, privacy state, bridge
