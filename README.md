@@ -54,7 +54,7 @@ the allowed signers committed in this repository:
 
 ```bash
 sha256sum -c sos-node-v0.3.2-testnet-linux-x86_64.tar.gz.sha256
-sha256sum -c sos-node-v0.3.2-testnet-windows-x86_64.zip.sha256
+tr -d '\r' < sos-node-v0.3.2-testnet-windows-x86_64.zip.sha256 | sha256sum -c -
 cosign verify-blob \
   --bundle RELEASE-MANIFEST.sigstore.json \
   --certificate-identity \
@@ -62,6 +62,9 @@ cosign verify-blob \
   --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
   RELEASE-MANIFEST.json
 ```
+
+The `tr` normalization makes the current Windows-generated sidecar portable to
+POSIX `sha256sum`; it does not alter the downloaded ZIP or its signed digest.
 
 The release manifest is signed keylessly by the protected GitHub Actions tag
 workflow. The Windows ZIP is bound by that Sigstore manifest; the executable
