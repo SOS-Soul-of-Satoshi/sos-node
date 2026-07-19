@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and general feedback
+    url: https://github.com/SOS-Soul-of-Satoshi/sos-node/discussions
+    about: Ask for help, share testnet feedback, or discuss an idea before filing an issue.
+  - name: Private security report
+    url: https://github.com/SOS-Soul-of-Satoshi/sos-node/security/advisories/new
+    about: Report vulnerabilities privately. Never publish secrets in an issue.

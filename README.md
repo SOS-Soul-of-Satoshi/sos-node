@@ -91,6 +91,7 @@ not need a GPU. Provers and relayers are separately operated services.
 - JSON-RPC and genesis: [node.soulofsatoshi.com](https://node.soulofsatoshi.com)
 - Ethereum contracts: [sos-contracts](https://github.com/SOS-Soul-of-Satoshi/sos-contracts)
 - Feedback and support: [GitHub Discussions](https://github.com/SOS-Soul-of-Satoshi/sos-node/discussions)
+- Support policy and report forms: [SUPPORT.md](SUPPORT.md)
 
 The scheduled probe in [`scripts/sos-public-probe.py`](scripts/sos-public-probe.py)
 checks public HTTPS, chain progress, supply conservation, privacy state, bridge

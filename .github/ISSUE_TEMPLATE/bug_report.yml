@@ -1,0 +1,70 @@
+name: Bug report
+description: Report a reproducible SOS node, wallet, explorer, faucet, or bridge defect.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing SOS. Remove every seed phrase, private key, token, cookie, password, and unredacted authentication header before submitting.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Node or P2P sync
+        - Validator or staking
+        - Wallet or faucet
+        - Privacy transactions
+        - Ethereum bridge
+        - Explorer or public RPC
+        - Release packaging or documentation
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Release or commit
+      placeholder: v0.3.2-testnet or a full commit SHA
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Ubuntu 22.04 x86_64, Windows 11, browser and version, or hosting provider
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest exact sequence that reproduces the problem.
+      placeholder: |
+        1. Run ...
+        2. Submit ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed result and redacted evidence
+      description: Include relevant hashes, heights, timestamps, status codes, and short redacted logs.
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed all credentials and wallet secrets, and this is not a private vulnerability report.
+          required: true

@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a testnet feature, protocol improvement, or documentation change.
+title: "[Proposal]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the user, operator, or protocol problem without prescribing a solution first.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Security, compatibility, and operational impact
+      description: Note consensus, bridge, wallet, privacy, migration, or deployment implications.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

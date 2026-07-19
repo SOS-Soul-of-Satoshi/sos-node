@@ -1,0 +1,57 @@
+name: Validator support
+description: Request help with public testnet validator installation, registration, sync, or operation.
+title: "[Validator]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not paste a wallet seed, consensus secret, SSH key, capability token, complete environment file, or keystore. The public faucet cannot fund the validator self-bond.
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Deployment stage
+      options:
+        - Release verification
+        - Initial node sync
+        - Bond funding
+        - Registration transaction
+        - Validator-set activation
+        - Signing or proposal participation
+        - Restart or recovery
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Release and binary SHA-256
+      placeholder: v0.3.2-testnet, d8dad0...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Host environment
+      placeholder: Ubuntu version, architecture, CPU/RAM, public or NAT topology
+    validations:
+      required: true
+  - type: textarea
+    id: state
+    attributes:
+      label: Current public state
+      description: Include only public identifiers and redacted output.
+      placeholder: Node height, peer count, transaction hash, validator ID, activation height, and service state
+    validations:
+      required: true
+  - type: textarea
+    id: attempts
+    attributes:
+      label: Commands tried and observed result
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Safety check
+      options:
+        - label: I removed every secret and understand that testnet tokens have no monetary value.
+          required: true
