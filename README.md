@@ -19,7 +19,7 @@ the private development repository during testnet.
 | Genesis SHA-256 | `6d20c7a7e6fa4706d4f9e2bcc0ad23c8a144601aee391301ef0912e3c809e524` |
 | Node profile | Pure `verify-only`; no embedded prover and no development RPC |
 | Linux binary SHA-256 | `d8dad0f50d0cd3cb8a0616459047ff6c46757216d619b35d0fd2bba6e87baeff` |
-| Windows binary SHA-256 | `e6a245882feba41c530a5fde3378d7c45b5d226703e94a78523034d732c6bfea` |
+| Windows binary SHA-256 | `fb1bf9f4e3eea84b5506fee5923305baf698ccee9e9c16357a6c5a2736f40841` |
 | Consensus | Two-phase BFT PoS; stake-weighted proposer permutation v2 |
 | Nominal block time | 1 second |
 | Active validators | 4 project-operated identities across Hetzner and a separate lab host |
