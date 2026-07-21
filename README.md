@@ -39,7 +39,7 @@ mainnet release.
 | Consensus | Two-phase BFT PoS; stake-weighted proposer permutation v2 |
 | Nominal block time | 1 second |
 | Active validators | 4 project-operated identities across Hetzner and a separate lab host |
-| Ethereum bridge | Sepolia Route2 deployed; intake administratively paused |
+| Ethereum bridge | Sepolia Route2 live; capped intake enabled and fail-closed monitored |
 
 Three validator processes share one Hetzner host and the fourth runs on a
 separate lab host and network. This gives the testnet two physical failure
@@ -47,9 +47,9 @@ domains, but it does not demonstrate organizational decentralization.
 Independent operators and external audits remain mainnet gates.
 
 Both SOS-to-Sepolia and Sepolia-to-SOS capped canaries completed, including
-replay rejection. Bridge intake is currently administratively paused while
-contract identity, TVL accounting, validator-set parity, relayer and monitoring
-remain healthy. The pinned Route2 contract is
+replay rejection. Bridge intake is enabled for the capped public testnet and is
+guarded by fail-closed checks for contract identity, TVL accounting,
+validator-set parity, relayer health and monitoring. The pinned Route2 contract is
 `0xB8863C0c094DE2f3f0C50EF96101b53B7374F0C9`, with bridge domain
 `0xb706d5afab98a2371bc5593e86be8ee1262f94dff4c1577741e1f506dd1a27ea`.
 
@@ -110,6 +110,7 @@ not need a GPU. Provers and relayers are separately operated services.
 - Explorer: [explorer.soulofsatoshi.com](https://explorer.soulofsatoshi.com)
 - JSON-RPC and genesis: [node.soulofsatoshi.com](https://node.soulofsatoshi.com)
 - Ethereum contracts: [sos-contracts](https://github.com/SOS-Soul-of-Satoshi/sos-contracts)
+- Community and live network status: [SOS Discord](https://discord.gg/dbbjsFBchP)
 - Feedback and support: [GitHub Discussions](https://github.com/SOS-Soul-of-Satoshi/sos-node/discussions)
 - Support policy and report forms: [SUPPORT.md](SUPPORT.md)
 
@@ -127,17 +128,19 @@ private send, unshield, both bridge directions, proven validator-set rotations,
 replay negatives, restart recovery, P2P catch-up and public RPC failover. An
 isolated four-validator production-profile chaos/load campaign built from the
 exact `v0.3.4-testnet` tagged source ran for six hours on 2026-07-20 with zero
-reported invariant violations. The Route2 deployment passed capped canaries in
-both directions before its current administrative pause. Those results are
-testnet evidence and do not establish
+reported invariant violations. Its machine-readable report and artifact hashes
+are retained in
+[`evidence/v0.3.4-testnet/`](evidence/v0.3.4-testnet/). The Route2 deployment
+passed capped canaries in both directions and remains enabled behind the
+operational guard. Those results are testnet evidence and do not establish
 independent-operator resilience.
 
 ## Security notice
 
 This is unaudited testnet software. Testnet tokens have no monetary value. The
 Sepolia V2 deployment enforces a 10,000 SOS outstanding cap and a 1,000 SOS
-per-deposit cap. The bridge is paused testnet infrastructure, not a production
-asset bridge. These controls limit exposure and do not replace consensus,
+per-deposit cap. The enabled bridge is capped, unaudited testnet infrastructure,
+not a production asset bridge. These controls limit exposure and do not replace consensus,
 bridge, cryptographic, wallet or operations audits. Do not use testnet keys for
 any other network.
 

@@ -4,7 +4,8 @@ This repository is the durable support record for the SOS public testnet.
 
 ## Where To Ask
 
-- Questions, setup help, and general feedback: [GitHub Discussions](https://github.com/SOS-Soul-of-Satoshi/sos-node/discussions)
+- Community chat and live network status: [SOS Discord](https://discord.gg/dbbjsFBchP)
+- Durable questions, setup help, and general feedback: [GitHub Discussions](https://github.com/SOS-Soul-of-Satoshi/sos-node/discussions)
 - Reproducible software defects: [bug report](https://github.com/SOS-Soul-of-Satoshi/sos-node/issues/new?template=bug_report.yml)
 - Validator onboarding or operations: [validator support](https://github.com/SOS-Soul-of-Satoshi/sos-node/issues/new?template=validator_support.yml)
 - Product or protocol proposals: [feature request](https://github.com/SOS-Soul-of-Satoshi/sos-node/issues/new?template=feature_request.yml)
