@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite the Soul of Satoshi Whitepaper V2 and public testnet implementation using this metadata."
+title: "Soul of Satoshi: Public Testnet Node"
+type: software
+authors:
+  - name: "The Soul of Satoshi Project"
+version: "0.3.4-testnet"
+date-released: 2026-07-20
+url: "https://soulofsatoshi.com"
+repository-code: "https://github.com/SOS-Soul-of-Satoshi/sos-node"
+preferred-citation:
+  type: article
+  title: "Soul of Satoshi: A Fully Post-Quantum Layer-1 with Opt-In Shielded Transactions and a Proof-Based, Non-Custodial Ethereum Bridge"
+  authors:
+    - name: "The Soul of Satoshi Project"
+  year: 2026
+  url: "https://soulofsatoshi.com/wp/"

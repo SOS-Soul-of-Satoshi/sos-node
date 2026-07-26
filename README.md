@@ -106,6 +106,11 @@ not need a GPU. Provers and relayers are separately operated services.
 ## Public services
 
 - Website: [soulofsatoshi.com](https://soulofsatoshi.com)
+- Whitepaper V2: [interactive specification](https://soulofsatoshi.com/wp/)
+- Post-quantum architecture: [technical overview](https://soulofsatoshi.com/post-quantum)
+- Optional privacy: [PQ-MWEB and local proving](https://soulofsatoshi.com/privacy)
+- Trustless Ethereum bridge: [proof and security model](https://soulofsatoshi.com/ethereum-bridge)
+- Testnet onboarding: [join the public testnet](https://soulofsatoshi.com/testnet)
 - Wallet: [app.soulofsatoshi.com](https://app.soulofsatoshi.com)
 - Explorer: [explorer.soulofsatoshi.com](https://explorer.soulofsatoshi.com)
 - JSON-RPC and genesis: [node.soulofsatoshi.com](https://node.soulofsatoshi.com)
@@ -134,6 +139,13 @@ are retained in
 passed capped canaries in both directions and remains enabled behind the
 operational guard. Those results are testnet evidence and do not establish
 independent-operator resilience.
+
+## Citation
+
+Use the canonical metadata in [`CITATION.cff`](CITATION.cff) when referencing
+the protocol, public testnet implementation, or Whitepaper V2. The interactive
+paper exposes the complete specification, source hash, diagrams, transcripts,
+and video explanations at [soulofsatoshi.com/wp](https://soulofsatoshi.com/wp/).
 
 ## Security notice
 
