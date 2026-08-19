@@ -2,7 +2,7 @@ name: Network Smoke
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "0 * * * *"
   push:
     branches: [main]
     paths:
@@ -47,4 +47,11 @@ jobs:
         run: python3 scripts/sos-public-probe.py --self-test
 
       - name: Probe live network
+        if: github.event_name != 'pull_request'
         run: python3 scripts/sos-public-probe.py --pretty
+
+      - name: Skip live network on pull requests
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "Live public network smoke is skipped on pull_request."
+          echo "schedule, push, and workflow_dispatch still probe the public network."
